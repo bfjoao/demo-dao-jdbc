@@ -46,8 +46,8 @@ public class SellerDaoJDBC implements SellerDao {
 			if(linhasAfetadas > 0) {
 				ResultSet rs = st.getGeneratedKeys();
 				if(rs.next()) {
-					int id = rs.getInt(1);
-					obj.setId(id);
+					int id = rs.getInt(1); // Obtém o ID gerado
+					obj.setId(id); // Define o ID no objeto
 				}
 				DB.closeResultSet(rs);
 			}
@@ -174,19 +174,19 @@ public class SellerDaoJDBC implements SellerDao {
 			rs = st.executeQuery();
 			
 			List<Seller> list = new ArrayList<>();
-			Map<Integer, Department> map = new HashMap<>();
+			Map<Integer, Department> map = new HashMap<>(); // Evita criar objetos duplicados de Department
 			
-			while (rs.next()) { 
-				Department dep = map.get(rs.getInt("DepartmentId"));
+			while (rs.next()) { // Percorre todas as linhas do ResultSet (cada linha representa um vendedor e seu departamento)
+				Department dep = map.get(rs.getInt("DepartmentId")); // Tenta buscar o departamento correspondente no map usando DepartmentId.
 				
-				if(dep == null) {
-					dep = instantiateDepartment(rs);
-					map.put(rs.getInt("DepartmentId"), dep);
+				if(dep == null) { // Se o departamento ainda não existe no map
+					dep = instantiateDepartment(rs); // Cria um novo objeto Department com os dados do ResultSet.
+					map.put(rs.getInt("DepartmentId"), dep); // Adiciona o novo Department no map, para que ele possa ser reutilizado nas próximas iterações
 					
 				}
 				
 				
-				Seller sell = instantiateSeller(rs, dep); 
+				Seller sell = instantiateSeller(rs, dep); // Cria um novo vendedor (Seller), associando-o ao departamento já instanciado (dep)
 				list.add(sell);
 			}
 			return list; 
